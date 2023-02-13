@@ -1,0 +1,57 @@
+import os
+import sys
+
+import requests
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton
+
+SCREEN_SIZE = [600, 500]
+
+
+
+class Example(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+        self.button.clicked.connect(self.getImage)
+        self.button.clicked.connect(self.paint)
+
+    def getImage(self):
+        self.a = self.input1.text()
+        self.b = self.input2.text()
+        map_request = f"http://static-maps.yandex.ru/1.x/?ll={self.a}&spn={self.b},{self.b}&l=map"
+        response = requests.get(map_request)
+        self.map_file = "map.png"
+        with open(self.map_file, "wb") as file:
+            file.write(response.content)
+        
+    def paint(self):
+        self.pixmap = QPixmap(self.map_file)
+        self.image = QLabel(self)
+        self.image.move(0, 50)
+        self.image.resize(600, 450)
+        self.image.setPixmap(self.pixmap)
+
+    def initUI(self):
+        self.setGeometry(100, 100, *SCREEN_SIZE)
+        self.setWindowTitle('Отображение карты')
+
+        self.input1 = QLineEdit(self)
+        self.input1.setGeometry(0, 0, 150, 50)
+
+        self.input2 = QLineEdit(self)
+        self.input2.setGeometry(200, 0, 150, 50)
+
+        self.button = QPushButton(self)
+        self.button.setText('найти')
+        self.button.setGeometry(400, 0, 70, 50)
+
+    def closeEvent(self, event):
+        os.remove(self.map_file)
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = Example()
+    ex.show()
+    sys.exit(app.exec())
