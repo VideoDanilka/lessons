@@ -9,13 +9,6 @@ def form_sample():
         with open('form.html', 'r', encoding='utf-8') as html_stream:
             return html_stream.read()
     elif request.method == 'POST':
-        print(request.form['email'])
-        print(request.form['password'])
-        print(request.form['class'])
-        print(request.form['file'])
-        print(request.form['about'])
-        print(request.form['accept'])
-        print(request.form['sex'])
         return "Форма отправлена"
 
 

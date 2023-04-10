@@ -10,6 +10,8 @@ def file_upload():
             return html_stream.read()
     elif request.method == 'POST':
         file_name = request.form['file_name']
+        f = request.files['file_name']
+        print(f.read())
         return render_template('file.html', file_name=file_name)
 
 
