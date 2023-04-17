@@ -31,6 +31,8 @@ def form_sample():
         with open('astronaut_selection.html', 'r', encoding='utf-8') as html_stream:
             return html_stream.read()
     elif request.method == 'POST':
+        print(request.form['class'])
+        print(request.form['sex'])
         return "Форма отправлена"
 
 
