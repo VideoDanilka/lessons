@@ -11,7 +11,7 @@ def file_upload():
     elif request.method == 'POST':
         f = request.files['file_name']
         f.save('static/img/' + f.filename)
-        return render_template('file.html', file_name=f.file_name)
+        return render_template('file.html', file_name=f.filename)
 
 
 if __name__ == '__main__':

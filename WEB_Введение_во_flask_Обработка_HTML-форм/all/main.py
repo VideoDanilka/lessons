@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, render_template
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
@@ -37,6 +37,17 @@ def form_sample():
 @app.route('/results/<nickname>/<int:level>/<float:rating>')
 def result(nickname, level, rating):
     return render_template('results.html', nickname=nickname, level=level, rating=rating)
+
+
+@app.route('/load_photo', methods=['POST', 'GET'])
+def file_upload():
+    if request.method == 'GET':
+        with open('templates/file.html', 'r', encoding='utf-8') as html_stream:
+            return html_stream.read()
+    elif request.method == 'POST':
+        f = request.files['file_name']
+        f.save('static/img/' + f.filename)
+        return render_template('file.html', file_name=f.filename)
 
 
 if __name__ == '__main__':
