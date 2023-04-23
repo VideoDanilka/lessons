@@ -1,3 +1,3 @@
-from ex_3 import count_lines
+from ex_8 import print_error
 
-print(count_lines('test.txt'))
+print_error("")

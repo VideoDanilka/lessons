@@ -1,11 +1,11 @@
 import argparse
 
-parser = argparse.ArgumentParser(add_help=False)
-parser.add_argument('args', nargs='*', help=argparse.SUPPRESS)
+parser = argparse.ArgumentParser()
+parser.add_argument('arg', nargs='*', help='')
 args = parser.parse_args()
 
-if not args.args:
+if not args.arg:
     print('no args')
 else:
-    for arg in args.args:
+    for arg in args.arg:
         print(arg)
