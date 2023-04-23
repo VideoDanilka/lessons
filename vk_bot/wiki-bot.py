@@ -1,49 +1,41 @@
 import vk_api
-import random
+from vk_api.longpoll import VkLongPoll, VkEventType
 import wikipedia
 
-
-class VKBot:
-    def __init__(self, token):
-        self.token = token
-        self.vk_session = vk_api.VkApi(token=self.token)
-        self.vk = self.vk_session.get_api()
-        self.longpoll = vk_api.bot_longpoll.VkBotLongPoll(self.vk_session, group_id)
-
-    def run(self):
-        for event in self.longpoll.listen():
-            if event.type == vk_api.bot_longpoll.VkBotEventType.MESSAGE_NEW:
-                self.on_message(event)
-
-    def on_message(self, event):
-        message = event.obj.message['text']
-        user_id = event.obj.message['from_id']
-        peer_id = event.obj.message['peer_id']
-
-        if message.lower() == 'привет':
-            self.send_message(peer_id, f'Привет, пользователь! Что ты хочешь узнать?')
-        elif message.lower() == 'пока':
-            self.send_message(peer_id, f'Пока, пользователь!')
-        else:
-            try:
-                summary = wikipedia.summary(message)
-                self.send_message(peer_id, summary)
-                self.send_message(peer_id, f'Что еще ты хочешь узнать?')
-            except wikipedia.exceptions.DisambiguationError as e:
-                options = '\n'.join(e.options)
-                self.send_message(peer_id, f'Уточни, о чем именно ты хочешь узнать:\n{options}')
-
-    def send_message(self, peer_id, message):
-
-        self.vk.messages.send(
-            peer_id=peer_id,
-            message=message,
-            random_id=random.randint(0, 2 ** 64)
-        )
+vk_session = vk_api.VkApi(token='vk1.a.gV418o9HEmTOQI2gPvO04uTQ_fzNuRTeH6ruGpoLL6ZtfSrf_QsYWEwGdtGEo2eZLdu7lkkdw8T-bg3gV7Lr8eR4I6H6Qmk9wDbN3vI8dRgR1qLUa3kLXoT3MjLddbZ-CoDmNmLFt1VNFvSscfHtwzPfkkiYyJN-Nq1GUi2abNf_jLTb2dj065ckqDJBxHswivvucSBLXFGLODaT3WaxLA')
+longpoll = VkLongPoll(vk_session)
 
 
-if __name__ == '__main__':
-    token = 'ваш_токен'
-    group_id = 'ваш_идентификатор_сообщества'
-    bot = VKBot(token)
-    bot.run()
+def send_message(peer_id, message):
+    vk_session.method('messages.send', {'peer_id': peer_id, 'message': message, 'random_id': 0})
+
+
+for event in longpoll.listen():
+    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+        message = event.text.lower()
+
+        send_message(event.peer_id, 'Что вы хотите узнать?')
+
+        for event in longpoll.listen():
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                query = event.text.lower()
+
+                try:
+                    page = wikipedia.page(query)
+                    summary = wikipedia.summary(query)
+                    send_message(event.peer_id, summary)
+                except:
+                    send_message(event.peer_id,
+                                 'Извините, я не смог найти информацию по вашему запросу')
+
+                send_message(event.peer_id, 'Хотите узнать что-то еще? (Да/Нет)')
+
+                for event in longpoll.listen():
+                    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                        answer = event.text.lower()
+
+                        if answer == 'да':
+                            break
+                        else:
+                            send_message(event.peer_id, 'Спасибо за обращение!')
+                            break
