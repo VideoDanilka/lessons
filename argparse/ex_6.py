@@ -14,9 +14,14 @@ try:
         if args.sort:
             lines.sort()
         if args.num:
-            lines = [f"{i} {line}" for i, line in enumerate(lines)]
-        print(''.join(lines))
-        if args.count:
-            print(f"rows count: {len(lines)}")
+            for i, line in enumerate(lines):
+                line = str.strip(line)
+                print(f"{i} {line}")
+        else:
+            for line in lines:
+                line = str.strip(line)
+                print(line)
+    if args.count:
+        print(f"rows count: {len(lines)}")
 except FileNotFoundError:
     print('ERROR')

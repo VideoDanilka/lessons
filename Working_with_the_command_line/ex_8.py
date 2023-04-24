@@ -5,14 +5,10 @@ filename = ''
 if len(sys.argv) <= 0:
     print("ERROR")
     sys.exit()
-elif len(sys.argv) == 2:
-    filename = sys.argv[1]
-elif len(sys.argv) == 3:
-    filename = sys.argv[2]
-elif len(sys.argv) == 4:
-    filename = sys.argv[3]
-elif len(sys.argv) == 5:
-    filename = sys.argv[4]
+else:
+    for arg in sys.argv[1:]:
+        if '.txt' in arg:
+            filename = arg
 
 # проверяем, что файл существует
 try:
