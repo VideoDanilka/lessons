@@ -42,10 +42,12 @@ if sort_lines:
 # вывод строк
 if numbered_lines:
     for i, line in enumerate(lines):
-        print(f"{i} {line}", end='')
+        line = str.strip(line)
+        print(f"{i} {line}")
 else:
     for line in lines:
-        print(line, end='')
+        line = str.strip(line)
+        print(line)
 
 # вывод кол-ва строк
 if count_lines:
